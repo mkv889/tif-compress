@@ -1,0 +1,38 @@
+# Copilot Code Review Ruleset for tif-compress
+
+# This ruleset enables Copilot automated code reviews and approvals.
+# Adjust the rules below to fit your project's needs.
+
+copilot:
+  enabled: true
+  reviewers:
+    - "github-copilot[bot]"     # Enable Copilot bot as reviewer
+  approve_conditions:
+    # Require all status checks to pass before approval
+    status_checks: 
+      required: true
+    # Require no open critical security alerts
+    security_alerts:
+      severity: ["critical"]
+      action: "block"
+    # Optionally enforce code style with a linter (example: flake8)
+    linter:
+      enabled: true
+      tool: "flake8"
+      fail_on_error: true
+    # Optionally require PR description
+    pr_description:
+      required: true
+    # Optionally restrict auto-approval to certain branches
+    branches:
+      allow: ["main", "master", "release/*"]
+    # Optionally require test coverage (if tests exist)
+    test_coverage:
+      enabled: false   # Set to true if you have coverage reports
+      min_coverage: 80
+
+  # Additional custom rules can be added here
+
+notifications:
+  on_approve: true
+  on_reject: true
