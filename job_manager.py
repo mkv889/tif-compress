@@ -1,33 +1,47 @@
-import queue
-import threading
+import logging
+import concurrent.futures
+from typing import Callable, Optional, List, Tuple
+
+logger = logging.getLogger(__name__)
 
 class JobManager:
-    def __init__(self, completion_callback=None):
-        self.job_queue = queue.Queue()
+    def __init__(self, completion_callback: Optional[Callable[[str, bool, Optional[str]], None]] = None):
         self.completion_callback = completion_callback  # Called with (input_path, success, error_msg)
-        self.thread = None
+        self.executor: Optional[concurrent.futures.ProcessPoolExecutor] = None
+        self.futures: List[concurrent.futures.Future] = []
 
-    def add_job(self, input_path, output_path):
-        self.job_queue.put((input_path, output_path))
+    def start(self, compressor_func: Callable[[str, str], Tuple[bool, Optional[str]]], jobs: List[Tuple[str, str]]):
+        """
+        Starts the compression jobs using a ProcessPoolExecutor.
+        """
+        if self.executor:
+            self.cancel()
 
-    def process_queue(self, compressor_func):
-        while not self.job_queue.empty():
-            input_path, output_path = self.job_queue.get()
-            success, error_msg = compressor_func(input_path, output_path)
-            if self.completion_callback:
-                # Call the callback in the main thread using tkinter's after method if possible
-                try:
-                    import tkinter
-                    root = tkinter._default_root
-                    if root:
-                        root.after(0, self.completion_callback, input_path, success, error_msg)
-                    else:
-                        self.completion_callback(input_path, success, error_msg)
-                except Exception:
-                    self.completion_callback(input_path, success, error_msg)
-            self.job_queue.task_done()
+        logger.info(f"Starting {len(jobs)} compression jobs.")
+        self.executor = concurrent.futures.ProcessPoolExecutor()
+        self.futures = []
 
-    def start(self, compressor_func):
-        self.thread = threading.Thread(target=self.process_queue, args=(compressor_func,))
-        self.thread.daemon = True
-        self.thread.start()
+        for input_path, output_path in jobs:
+            future = self.executor.submit(compressor_func, input_path, output_path)
+            future.add_done_callback(lambda f, ip=input_path: self._handle_completion(ip, f))
+            self.futures.append(future)
+
+    def _handle_completion(self, input_path: str, future: concurrent.futures.Future):
+        try:
+            success, error_msg = future.result()
+        except Exception as e:
+            logger.exception(f"Unexpected error in job for {input_path}")
+            success, error_msg = False, str(e)
+
+        if self.completion_callback:
+            self.completion_callback(input_path, success, error_msg)
+
+    def cancel(self):
+        """
+        Cancels all pending and running jobs.
+        """
+        if self.executor:
+            logger.info("Cancelling all jobs.")
+            self.executor.shutdown(wait=False, cancel_futures=True)
+            self.executor = None
+            self.futures = []

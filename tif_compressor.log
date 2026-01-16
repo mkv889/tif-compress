@@ -1,0 +1,9 @@
+2026-01-15 17:55:27,452 - __main__ - INFO - Starting TIF Compressor application
+2026-01-15 17:56:08,771 - job_manager - INFO - Starting 1 compression jobs.
+2026-01-15 17:56:09,643 - gui - INFO - All jobs completed.
+2026-01-15 17:58:01,111 - job_manager - INFO - Cancelling all jobs.
+2026-01-15 17:58:01,111 - job_manager - INFO - Starting 48 compression jobs.
+2026-01-15 17:58:02,959 - job_manager - INFO - Cancelling all jobs.
+2026-01-15 17:58:02,960 - gui - INFO - Compression cancelled by user.
+2026-01-15 17:58:04,412 - gui - INFO - All jobs completed.
+2026-01-15 18:00:24,886 - __main__ - INFO - Starting TIF Compressor application

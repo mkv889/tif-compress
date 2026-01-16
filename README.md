@@ -1,69 +1,60 @@
 # TIF Compressor
 
-TIF Compressor is a Python application for compressing TIFF image files with a user-friendly GUI. It supports batch processing, job management, and customizable compression settings.
+A high-performance, modern desktop application for batch compressing TIF/TIFF images using LZW compression. Built with Python, Tkinter, and Pillow, featuring a design system inspired by the Firefox brand.
 
 ## Features
-- Compress single or multiple TIFF files
-- Batch processing for folders
-- Customizable compression options
-- Simple graphical user interface (GUI)
-- Job management for tracking compression tasks
-- Cross-platform support (Windows, macOS, Linux)
 
-## Requirements
-- Python 3.12 or higher
-- Required Python packages (see `requirements.txt`)
+- **Modern UI**: Clean, dark-themed interface based on the Firefox design specification.
+- **High Performance**: Utilizes multiprocessing (`ProcessPoolExecutor`) to compress multiple files in parallel, significantly reducing processing time for large batches.
+- **Batch Processing**: Easily add individual files or entire folders to the queue.
+- **Real-time Progress**: Visual progress bar and status updates for the entire batch.
+- **Robust Error Handling**: Validates output directories, checks for disk space, and logs errors for failed jobs.
+- **Custom Typography**: Integrated Metropolis and Inter fonts for a professional look.
 
 ## Installation
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/mkv889/tif-compressor.git
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/tif-compressor.git
    cd tif-compressor
    ```
-2. **Create a virtual environment (recommended):**
-   ```sh
-   python -m venv .venv
-   # Activate the environment:
-   # On Windows:
-   .venv\Scripts\activate
-   # On macOS/Linux:
-   source .venv/bin/activate
-   ```
-3. **Install dependencies:**
-   ```sh
+
+2. Install dependencies:
+   ```bash
    pip install -r requirements.txt
    ```
 
+3. Ensure the `fonts/` directory is present with the required `.ttf` files.
+
 ## Usage
-### GUI Mode
-Run the main application to launch the GUI:
-```sh
+
+Run the application using:
+```bash
 python main.py
 ```
 
-### Command-Line Mode
-You can also use the compressor via command line (if supported):
-```sh
-python compressor.py --input <input_path> --output <output_path> [options]
-```
+1. **Add Files/Folder**: Use the buttons in the selection area to populate the job queue.
+2. **Select Output**: Choose a destination folder for the compressed files.
+3. **Start**: Click "Start Compression" to begin the parallel processing.
+4. **Monitor**: Watch the progress bar and status label for real-time feedback.
 
-#### Example:
-```sh
-python compressor.py --input images/ --output compressed/ --quality 80
-```
+## Technical Details
 
-## Project Structure
-- `main.py` — Entry point for the GUI application
-- `gui.py` — GUI logic and components
-- `compressor.py` — Core compression logic
-- `job_manager.py` — Job management and batch processing
-- `requirements.txt` — Python dependencies
+- **Compression**: Uses `Pillow`'s `tiff_lzw` compression algorithm.
+- **Concurrency**: Implemented via `concurrent.futures.ProcessPoolExecutor` to bypass the GIL and utilize multiple CPU cores.
+- **Logging**: Comprehensive logging to both `tif_compressor.log` and the console.
+- **Design System**:
+  - **Primary Color**: `#0060E0` (Firefox Blue)
+  - **Background**: `#0A214D` (Deep Navy)
+  - **Surface**: `#073072` (Navy)
+  - **Success**: `#3FE1B0` (Emerald)
 
-## Contributing
-Contributions are welcome! Please open issues or submit pull requests for bug fixes, new features, or improvements.
+## Requirements
+
+- Python 3.8+
+- Pillow
+- Windows OS (for custom font loading via GDI32)
 
 ## License
-This project is licensed under the MIT License.
 
-## Author
-- [mkv889](https://github.com/mkv889)
+[MIT License](LICENSE)
